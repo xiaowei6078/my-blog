@@ -18,17 +18,17 @@ module.exports = {
             error: true
         },
         open: true,
-        host: "0.0.0.0", // 允许外部ip访问
+        host: "localhost", // 允许外部ip访问
         port: 9090,
         https: false, // 启用https
         proxy: {
             "/api": {
                 //如果你的前端应用和后端 API 服务器没有运行在同一个主机上，你需要在开发环境下将 API 请求代理到 API 服务器。
-                target: "http://localhost:9090",
-                changeOrigin: true, // 允许websockets跨域
-                pathRewrite: {
-                    "^/api": ""
-                }
+                target: "http://localhost:9091",
+                changeOrigin: true // 允许websockets跨域
+                // pathRewrite: {
+                //     "^/api": ""
+                // }
             }
         }
     },
@@ -66,7 +66,7 @@ module.exports = {
                     new UglifyPlugin({
                         uglifyOptions: {
                             compress: {
-                                warnings: false,
+                                // warnings: false,
                                 drop_console: true, // console
                                 drop_debugger: false,
                                 pure_funcs: ["console.log"] // 移除console

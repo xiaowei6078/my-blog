@@ -2,15 +2,18 @@ import router from "@r";
 import store from "@s";
 import { MessageBox, Message } from "element-ui";
 
-const res = res => {
-    res.use(
+const resDef = resArg => {
+    resArg.use(
         response => {
             const res = response.data; //这是响应返回后的结果
             //在这里可以根据返回的状态码对存在响应错误的请求做拦截，提前做处理。
 
             //以下为我司的处理规则
             // 如果自定义代码不是200，则判断为错误。
-            if (res.code == 200 || res.code == 300) {
+            if (res.code === 0) {
+                return res;
+            }
+            if (res.code === 200 || res.code === 300) {
                 // 重新登陆
                 MessageBox.confirm(
                     "您的登录状态存在问题，您可以取消以停留在此页面，或再次登录",
@@ -23,13 +26,16 @@ const res = res => {
                     store.dispatch("user/resetToken").then(() => {
                         location.reload();
                     });
+                    router.replace({
+                        path: "/login"
+                    });
                 });
                 return;
             } else {
                 if (res.code == 700) {
                     Message.warning("您没有获取请求的权限！");
                     router.replace({
-                        path: "/401"
+                        path: "/login"
                     });
                     return;
                 } else {
@@ -38,6 +44,7 @@ const res = res => {
             }
         },
         error => {
+            debugger;
             Message({
                 message: error.message,
                 type: "error",
@@ -48,4 +55,4 @@ const res = res => {
     );
 };
 
-export default res;
+export default resDef;

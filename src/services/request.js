@@ -4,20 +4,25 @@ import qs from "qs";
 const req = request => {
     request.use(
         config => {
+            const _t = Date.parse(new Date()) / 1000;
             if (store.getters.getToken) {
                 // 让每个请求携带令牌——['Has-Token']作为自定义密钥。
                 // 请根据实际情况修改。
                 // config.headers['Has-Token'] = getToken()
             }
-            //在这里根据自己相关的需求做不同请求头的切换，我司是需要使用这两种请求头。
+
             if (config.method === "post") {
-                config.headers["Content-Type"] = "application/json";
-                config.data = qs.stringify(config.data); //利用qs做json序列化
+                //利用qs做json序列化
+                config.data = qs.stringify({
+                    ...config.data,
+                    _t
+                });
             } else {
-                config.headers["Content-Type"] =
-                    "application/x-www-form-urlencoded;charset=UTF-8";
+                config.params = {
+                    ...config.params,
+                    _t
+                };
             }
-            console.log(config);
             return config;
         },
         error => {
